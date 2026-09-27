@@ -1,0 +1,5 @@
+@import "tailwindcss";
+:root { --ink:#17211b; --muted:#68736c; --cream:#f7f5ef; --line:#e3e5df; --sage:#d9e8d6; --green:#315b43; --orange:#ed8b52; }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--cream); color:var(--ink); font-family:Arial,Helvetica,sans-serif; }
+button { cursor:pointer; }
