@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0d1117" />
+  <title>Commerce Control Room</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <section id="loginView" class="login-view">
+    <div class="login-card">
+      <div class="brand-mark">C</div>
+      <p class="eyebrow">Commerce control room</p>
+      <h1>Welcome back</h1>
+      <p class="muted">Sign in with an administrator account to manage your store.</p>
+      <form id="loginForm" class="stack">
+        <label>Email<input type="email" name="email" autocomplete="email" required placeholder="admin@yourstore.com" /></label>
+        <label>Password<input type="password" name="password" autocomplete="current-password" required placeholder="••••••••" /></label>
+        <button class="button primary" type="submit">Sign in <span>→</span></button>
+        <p id="loginError" class="form-error"></p>
+      </form>
+    </div>
+  </section>
+  <div id="appView" class="app-shell hidden">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark small">C</div><div><strong>Commerce</strong><span>Control room</span></div></div>
+      <nav id="mainNav" aria-label="Main navigation">
+        <button class="nav-item active" data-page="overview"><span>⌂</span>Overview</button>
+        <button class="nav-item" data-page="products"><span>▦</span>Products</button>
+        <button class="nav-item" data-page="orders"><span>◷</span>Orders</button>
+        <button class="nav-item" data-page="customers"><span>♙</span>Customers</button>
+        <p class="nav-label">Catalog</p>
+        <button class="nav-item" data-page="categories"><span>◈</span>Categories</button>
+        <button class="nav-item" data-page="brands"><span>◇</span>Brands</button>
+        <button class="nav-item" data-page="reviews"><span>☆</span>Reviews</button>
+        <p class="nav-label">System</p>
+        <button class="nav-item" data-page="settings"><span>⚙</span>Settings</button>
+      </nav>
+      <div class="sidebar-footer"><div class="status-dot"></div><span>API connected</span></div>
+    </aside>
+    <main class="main-content">
+      <header class="topbar"><button id="menuButton" class="icon-button" aria-label="Toggle menu">☰</button><div class="breadcrumb">Store / <strong id="pageTitle">Overview</strong></div><div class="top-actions"><button class="icon-button" aria-label="Notifications">◌</button><div id="userMenu" class="user-menu"></div></div></header>
+      <div id="pageContent" class="page-content"></div>
+    </main>
+  </div>
+  <script src="./app.js"></script>
+</body>
+</html>

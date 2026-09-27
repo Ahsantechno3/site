@@ -18,7 +18,8 @@ app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 app.use('/api', rateLimit({ windowMs: 15 * 60 * 1000, limit: 300, standardHeaders: true, legacyHeaders: false }));
 
-app.get('/', (_req, res) => res.json({ name: 'Admin API', status: 'ok' }));
+app.use('/admin', express.static(require('path').join(__dirname, '..', 'admin'), { extensions: ['html'] }));
+app.get('/', (_req, res) => res.json({ name: 'Commerce API', status: 'ok', admin: '/admin' }));
 app.get('/api/health', (_req, res) => res.json({ status: 'ok', database: require('mongoose').connection.readyState === 1 ? 'connected' : 'disconnected' }));
 
 app.use('/api/auth', require('./routes/auth'));
