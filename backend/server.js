@@ -22,7 +22,22 @@ const path = require('path');
 app.use('/admin', express.static(path.join(__dirname, '..', 'admin'), { extensions: ['html'] }));
 app.use(express.static(path.join(__dirname, '..', 'storefront'), { extensions: ['html'] }));
 app.get('/', (_req, res) => res.sendFile(path.join(__dirname, '..', 'storefront', 'index.html')));
-app.get('/api/health', (_req, res) => res.json({ status: 'ok', database: require('mongoose').connection.readyState === 1 ? 'connected' : 'disconnected' }));
+app.get('/api/health', (_req, res) => {
+  const database = require('mongoose').connection.readyState === 1 ? 'connected' : 'disconnected';
+  res.status(database === 'connected' ? 200 : 503).json({
+    status: database === 'connected' ? 'ok' : 'degraded',
+    database,
+  });
+});
+
+// Avoid Mongoose buffering requests for ten seconds when the configured remote database is unavailable.
+app.use('/api', (req, res, next) => {
+  if (req.path === '/health' || require('mongoose').connection.readyState === 1) return next();
+  return res.status(503).json({
+    message: 'Database is unavailable. Check the configured MONGO_URI and MongoDB network access.',
+    code: 'DATABASE_UNAVAILABLE',
+  });
+});
 
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/products', require('./routes/products'));
