@@ -8,7 +8,7 @@ const connectDB = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
-const port = Number(process.env.PORT || 5000);
+const port = Number(process.env.PORT || 3000);
 
 app.disable('x-powered-by');
 app.use(helmet());
@@ -18,8 +18,10 @@ app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 app.use('/api', rateLimit({ windowMs: 15 * 60 * 1000, limit: 300, standardHeaders: true, legacyHeaders: false }));
 
-app.use('/admin', express.static(require('path').join(__dirname, '..', 'admin'), { extensions: ['html'] }));
-app.get('/', (_req, res) => res.json({ name: 'Commerce API', status: 'ok', admin: '/admin' }));
+const path = require('path');
+app.use('/admin', express.static(path.join(__dirname, '..', 'admin'), { extensions: ['html'] }));
+app.use(express.static(path.join(__dirname, '..', 'storefront'), { extensions: ['html'] }));
+app.get('/', (_req, res) => res.sendFile(path.join(__dirname, '..', 'storefront', 'index.html')));
 app.get('/api/health', (_req, res) => res.json({ status: 'ok', database: require('mongoose').connection.readyState === 1 ? 'connected' : 'disconnected' }));
 
 app.use('/api/auth', require('./routes/auth'));
@@ -38,11 +40,8 @@ app.use(errorHandler);
 
 if (require.main === module) {
   connectDB()
-    .then(() => app.listen(port, () => console.log(`API listening on port ${port}`)))
-    .catch((error) => {
-      console.error(`[startup] ${error.message}`);
-      process.exit(1);
-    });
+    .catch((error) => console.error(`[startup] Database unavailable: ${error.message}`))
+    .finally(() => app.listen(port, () => console.log(`Commerce server listening on port ${port}`)));
 }
 
 module.exports = app;
