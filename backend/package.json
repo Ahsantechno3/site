@@ -1,19 +1,11 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "Ecommerce API",
   "main": "server.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "scripts": { "start": "node server.js", "dev": "node --watch server.js" },
   "keywords": [],
-  "author": "",
   "license": "ISC",
   "type": "commonjs",
-  "dependencies": {
-    "cors": "^2.8.6",
-    "dotenv": "^18.0.4",
-    "express": "^5.2.1",
-    "mongoose": "^9.10.2"
-  }
+  "dependencies": { "cors": "^2.8.6", "dotenv": "^18.0.4", "express": "^5.2.1", "mongoose": "^9.10.2" }
 }

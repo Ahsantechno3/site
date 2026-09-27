@@ -1,106 +1,68 @@
 "use client";
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+
+import { FormEvent, useEffect, useState } from "react";
+
+const apiBase = process.env.NEXT_PUBLIC_API_URL ?? "/api";
+
+type Product = {
+  _id: string;
+  name: string;
+  sku: string;
+  price: number;
+  stock: number;
+};
 
 export default function ProductsPage() {
-    const [products, setProducts] = useState([]);
-    const [name, setName] = useState('');
-    const [slug, setSlug] = useState('');
-    const [sku, setSku] = useState('');
-    const [description, setDescription] = useState('');
-    const [price, setPrice] = useState('');
-    const [stock, setStock] = useState('');
-    const [category, setCategory] = useState('65f1a2b3c4d5e6f7a8b9c0d1'); // Dummy Object ID for now
+  const [products, setProducts] = useState<Product[]>([]);
+  const [form, setForm] = useState({ name: "", slug: "", sku: "", description: "", price: "", stock: "" });
+  const [status, setStatus] = useState("");
 
-    useEffect(() => {
-        fetchProducts();
-    }, []);
+  async function fetchProducts() {
+    const response = await fetch(`${apiBase}/products`, { cache: "no-store" });
+    if (!response.ok) throw new Error("Unable to load products");
+    const data = await response.json();
+    setProducts(Array.isArray(data) ? data : data.products ?? []);
+  }
 
-    const fetchProducts = async () => {
-        try {
-            const res = await axios.get('http://localhost:5000/api/products');
-            setProducts(res.data);
-        } catch (error) {
-            console.error('Error fetching products:', error);
-        }
-    };
+  useEffect(() => {
+    fetchProducts().catch(() => setStatus("Connect the API to load products."));
+  }, []);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const newProduct = {
-                name,
-                slug,
-                sku,
-                description,
-                price: Number(price),
-                stock: Number(stock),
-                category
-            };
-            await axios.post('http://localhost:5000/api/products', newProduct);
-            fetchProducts(); // Refresh list
-            // Clear form
-            setName(''); setSlug(''); setSku(''); setDescription(''); setPrice(''); setStock('');
-            alert('Product created successfully!');
-        } catch (error) {
-            console.error('Error creating product:', error);
-            alert('Error creating product.');
-        }
-    };
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setStatus("Saving product...");
+    const response = await fetch(`${apiBase}/products`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...form, price: Number(form.price), stock: Number(form.stock) }),
+    });
+    if (!response.ok) {
+      setStatus("Product could not be saved.");
+      return;
+    }
+    setForm({ name: "", slug: "", sku: "", description: "", price: "", stock: "" });
+    await fetchProducts();
+    setStatus("Product saved.");
+  }
 
-    return (
-        <div className="p-6">
-            <h1 className="text-2xl font-bold mb-4">Products</h1>
-            
-            <div className="bg-white p-4 rounded shadow mb-6 text-black">
-                <h2 className="text-xl mb-4">Add New Product</h2>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
-                        <input type="text" placeholder="Name" value={name} onChange={e => setName(e.target.value)} className="border p-2 w-full" required />
-                    </div>
-                    <div>
-                        <input type="text" placeholder="Slug" value={slug} onChange={e => setSlug(e.target.value)} className="border p-2 w-full" required />
-                    </div>
-                    <div>
-                        <input type="text" placeholder="SKU" value={sku} onChange={e => setSku(e.target.value)} className="border p-2 w-full" required />
-                    </div>
-                    <div>
-                        <textarea placeholder="Description" value={description} onChange={e => setDescription(e.target.value)} className="border p-2 w-full" required />
-                    </div>
-                    <div>
-                        <input type="number" placeholder="Price" value={price} onChange={e => setPrice(e.target.value)} className="border p-2 w-full" required />
-                    </div>
-                    <div>
-                        <input type="number" placeholder="Stock" value={stock} onChange={e => setStock(e.target.value)} className="border p-2 w-full" required />
-                    </div>
-                    <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">Save Product</button>
-                </form>
-            </div>
-
-            <div className="bg-white p-4 rounded shadow text-black">
-                <h2 className="text-xl mb-4">Product List</h2>
-                <table className="w-full text-left border-collapse">
-                    <thead>
-                        <tr>
-                            <th className="border-b p-2">Name</th>
-                            <th className="border-b p-2">SKU</th>
-                            <th className="border-b p-2">Price</th>
-                            <th className="border-b p-2">Stock</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {products.map(product => (
-                            <tr key={product._id}>
-                                <td className="border-b p-2">{product.name}</td>
-                                <td className="border-b p-2">{product.sku}</td>
-                                <td className="border-b p-2">${product.price}</td>
-                                <td className="border-b p-2">{product.stock}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    );
+  return (
+    <main className="p-6">
+      <h1 className="mb-6 text-2xl font-bold">Products</h1>
+      <section className="mb-6 rounded-lg bg-white p-5 text-black shadow">
+        <h2 className="mb-4 text-xl font-semibold">Add new product</h2>
+        <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-2">
+          {(["name", "slug", "sku", "price", "stock"] as const).map((field) => (
+            <input key={field} required type={field === "price" || field === "stock" ? "number" : "text"} placeholder={field[0].toUpperCase() + field.slice(1)} value={form[field]} onChange={(event) => setForm({ ...form, [field]: event.target.value })} className="rounded border p-2" />
+          ))}
+          <textarea required placeholder="Description" value={form.description} onChange={(event) => setForm({ ...form, description: event.target.value })} className="rounded border p-2 md:col-span-2" />
+          <button type="submit" className="rounded bg-black px-4 py-2 text-white md:w-fit">Save product</button>
+          {status && <p className="self-center text-sm text-gray-600" role="status">{status}</p>}
+        </form>
+      </section>
+      <section className="rounded-lg bg-white p-5 text-black shadow">
+        <h2 className="mb-4 text-xl font-semibold">Product list</h2>
+        <div className="overflow-x-auto"><table className="w-full text-left"><thead><tr className="border-b"><th className="p-2">Name</th><th className="p-2">SKU</th><th className="p-2">Price</th><th className="p-2">Stock</th></tr></thead><tbody>{products.map((product) => <tr key={product._id} className="border-b"><td className="p-2">{product.name}</td><td className="p-2">{product.sku}</td><td className="p-2">${product.price}</td><td className="p-2">{product.stock}</td></tr>)}</tbody></table></div>
+      </section>
+    </main>
+  );
 }
-
