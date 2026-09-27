@@ -37,7 +37,12 @@ app.use((_req, res) => res.status(404).json({ message: 'Route not found' }));
 app.use(errorHandler);
 
 if (require.main === module) {
-  connectDB().then(() => app.listen(port, () => console.log(`API listening on port ${port}`))).catch(() => process.exit(1));
+  connectDB()
+    .then(() => app.listen(port, () => console.log(`API listening on port ${port}`)))
+    .catch((error) => {
+      console.error(`[startup] ${error.message}`);
+      process.exit(1);
+    });
 }
 
 module.exports = app;
