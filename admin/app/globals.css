@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+/* ===== Light Theme (Default) ===== */
+:root {
+  /* Primary / Brand */
+  --primary: #f97416;
+  --primary-light: #fed7aa;
+  --primary-soft: #fff7ed;
+  --primary-dark: #ea580c;
+
+  /* Secondary */
+  --secondary: #1f2937;
+
+  /* Background */
+  --background: #ffffff;
+  --surface: #f9fafb;
+
+  /* Text */
+  --text: #111827;
+  --text-soft: #4b5563;
+  --text-muted: #6b7280;
+
+  /* Border */
+  --border: #e5e7eb;
+}
+
+/* ===== Dark Theme (Eye-Care Comfortable Tones) ===== */
+[data-theme="dark"] {
+  /* Primary / Brand (Slightly warm orange to prevent glare) */
+  --primary: #f97316;
+  --primary-light: #ea580c;
+  --primary-soft: #271a12;
+  --primary-dark: #c2410c;
+
+  /* Secondary */
+  --secondary: #334155;
+
+  /* Background (Deep Charcoal Slate for zero glare) */
+  --background: #0b0f19;
+  --surface: #151c2c;
+
+  /* Text (Soft white & muted gray) */
+  --text: #f3f4f6;
+  --text-soft: #cbd5e1;
+  --text-muted: #94a3b8;
+
+  /* Border (Subtle dark borders) */
+  --border: #1e293b;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--background);
+  color: var(--text);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.recharts-wrapper,
+.recharts-wrapper *,
+.recharts-surface,
+.recharts-surface * {
+  outline: none !important;
+  border: none !important;
+}
