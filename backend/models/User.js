@@ -43,6 +43,7 @@ const userSchema = new mongoose.Schema({
   }],
   
   // Account Status
+  role: { type: String, enum: ['customer', 'admin', 'superadmin'], default: 'customer' },
   isActive: { type: Boolean, default: true },
   isVerified: { type: Boolean, default: false },
   

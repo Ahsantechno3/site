@@ -1,26 +1,43 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const rateLimit = require('express-rate-limit');
 const connectDB = require('./config/db');
-
-// Connect to database
-connectDB();
+const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
+const port = Number(process.env.PORT || 5000);
 
-// Middleware
-app.use(cors());
-app.use(express.json());
+app.disable('x-powered-by');
+app.use(helmet());
+app.use(cors({ origin: process.env.CLIENT_URL ? process.env.CLIENT_URL.split(',').map((v) => v.trim()) : true, credentials: true }));
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ extended: true, limit: '1mb' }));
+app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
+app.use('/api', rateLimit({ windowMs: 15 * 60 * 1000, limit: 300, standardHeaders: true, legacyHeaders: false }));
 
-// Routes
+app.get('/', (_req, res) => res.json({ name: 'Admin API', status: 'ok' }));
+app.get('/api/health', (_req, res) => res.json({ status: 'ok', database: require('mongoose').connection.readyState === 1 ? 'connected' : 'disconnected' }));
+
+app.use('/api/auth', require('./routes/auth'));
 app.use('/api/products', require('./routes/products'));
+app.use('/api/brands', require('./routes/brands'));
+app.use('/api/categories', require('./routes/categories'));
+app.use('/api/coupons', require('./routes/coupons'));
+app.use('/api/media', require('./routes/media'));
+app.use('/api/orders', require('./routes/orders'));
+app.use('/api/reviews', require('./routes/reviews'));
+app.use('/api/settings', require('./routes/settings'));
+app.use('/api/users', require('./routes/users'));
 
-app.get('/', (req, res) => {
-    res.send('Server live hai!');
-});
+app.use((_req, res) => res.status(404).json({ message: 'Route not found' }));
+app.use(errorHandler);
 
-const PORT = process.env.PORT || 5000;
+if (require.main === module) {
+  connectDB().then(() => app.listen(port, () => console.log(`API listening on port ${port}`))).catch(() => process.exit(1));
+}
 
-app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
-});
+module.exports = app;
+      
