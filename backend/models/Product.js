@@ -102,8 +102,9 @@ const productSchema = new mongoose.Schema({
   status: { 
     type: String, 
     enum: ['active', 'inactive', 'draft'], 
-    default: 'draft' 
+    default: 'draft'
   },
+  featured: { type: Boolean, default: false },
   
   // Shipping
   weight: { type: Number, min: 0 },
