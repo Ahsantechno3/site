@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { MessageSquare, Bell, CheckCheck } from "lucide-react";
-import SearchBar from "@/components/ui/SearchBar";
+import { MessageSquare, Bell, CheckCheck, UserRound } from "lucide-react";
+import SearchBar from "@/c2/ui/SearchBar";
 import ThemeToggle from "@/c2/models/ThemeToggle";
 
 // Dynamic Interfaces
@@ -53,6 +53,7 @@ export const TopBar = <T extends Record<string, any>>({
 }: TopBarProps<T>) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [activePopup, setActivePopup] = useState<"msg" | "notif" | null>(null);
+  const [failedAvatar, setFailedAvatar] = useState<string | null>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -67,6 +68,8 @@ export const TopBar = <T extends Record<string, any>>({
 
   const unreadMsgCount = messages.filter((m) => m.isUnread).length;
   const unreadNotifCount = notifications.filter((n) => n.isUnread).length;
+  const avatarSrc = user.avatar?.trim();
+  const showAvatarImage = Boolean(avatarSrc && failedAvatar !== avatarSrc);
 
   return (
     <header className="w-full min-h-14 bg-(--background) rounded-xl shadow-md border border-(--border) px-3  flex items-center justify-between select-none">
@@ -204,11 +207,18 @@ export const TopBar = <T extends Record<string, any>>({
 
         {/* Profile Card */}
         <div className="flex items-center gap-3 cursor-pointer hover:bg-(--primary-soft) p-1.5 rounded-xl">
-          <img
-            src={user.avatar}
-            alt={user.name}
-            className="w-9 h-9 min-w-9 min-h-9 shrink-0 rounded-full object-cover border border-(--primary-light)"
-          />
+          {showAvatarImage ? (
+            <img
+              src={avatarSrc}
+              alt={user.name}
+              onError={() => setFailedAvatar(avatarSrc)}
+              className="w-9 h-9 min-w-9 min-h-9 shrink-0 rounded-full object-cover border border-(--primary-light)"
+            />
+          ) : (
+            <span className="w-9 h-9 min-w-9 min-h-9 shrink-0 rounded-full border border-(--primary-light) bg-(--primary-soft) flex items-center justify-center text-(--text-muted)">
+              <UserRound className="w-5 h-5" aria-label={`${user.name} profile`} />
+            </span>
+          )}
           <div className="md:flex flex-col text-left hidden">
             <span className="text-xs font-bold text-(--text) leading-tight">
               {user.name}

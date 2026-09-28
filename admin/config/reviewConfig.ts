@@ -3,24 +3,39 @@ import { Download, Plus, RefreshCcwDot } from "lucide-react";
 
 export interface ProductReview {
   _id?: string;
-  id: number;
-  productId: string;
-  productName: string;
-  customerName: string;
-  customerEmail: string;
+  id?: number;
+  product?: string | { _id?: string; name?: string };
+  user?: string | { _id?: string; firstName?: string; lastName?: string; username?: string; email?: string };
+  productId?: string;
+  productName?: string;
+  customerName?: string;
+  customerEmail?: string;
   rating: number; // 1 to 5
-  title?: string;
-  comment: string;
-  status: "published" | "pending" | "rejected" | string;
-  isVerifiedPurchase: boolean;
-  createdAt: string;
+  title: string;
+  content?: string;
+  comment?: string;
+  status: "approved" | "pending" | "rejected" | string;
+  createdAt?: string;
 }
+
+type ReviewReference = ProductReview["product"] | ProductReview["user"];
+
+const referenceId = (reference: ReviewReference): string =>
+  typeof reference === "string" ? reference : reference?._id || "";
+
+const referenceLabel = (reference: ReviewReference): string => {
+  if (!reference || typeof reference === "string") return "";
+  if ("name" in reference && reference.name) return reference.name;
+  return ["firstName" in reference ? reference.firstName : "", "lastName" in reference ? reference.lastName : ""]
+    .filter(Boolean)
+    .join(" ") || ("username" in reference ? reference.username : "") || ("email" in reference ? reference.email : "") || "";
+};
 
 export const reviewConfig = {
   routeTitle: "Reviews",
 
   // Tabs status wise filter
-  tabs: ["All Reviews", "Published", "Pending", "Rejected"],
+  tabs: ["All Reviews", "Approved", "Pending", "Rejected"],
 
   // Action Buttons
   buttons: [
@@ -51,7 +66,7 @@ export const reviewConfig = {
   ],
 
   // Search Fields
-  searchFields: ["productName", "customerName", "customerEmail", "comment"],
+  searchFields: ["title", "content"],
 
   // Table Column Labels
   columnHeaders: {
@@ -59,7 +74,7 @@ export const reviewConfig = {
     productName: "Product",
     customerName: "Customer",
     rating: "Rating",
-    isVerifiedPurchase: "Verified",
+    content: "Review",
     status: "Status",
   },
 
@@ -75,8 +90,7 @@ export const reviewConfig = {
       rating: 5,
       title: "Amazing Sound Quality!",
       comment: "The active noise cancellation works perfectly during travel.",
-      status: "published",
-      isVerifiedPurchase: true,
+      status: "approved",
       createdAt: "2026-08-20T10:15:00Z",
     },
     {
@@ -90,7 +104,6 @@ export const reviewConfig = {
       title: "Average Quality",
       comment: "Armrests feel a bit wobbly, not worth the full price.",
       status: "pending",
-      isVerifiedPurchase: false,
       createdAt: "2026-08-25T14:30:00Z",
     },
   ] as ProductReview[],
@@ -99,10 +112,10 @@ export const reviewConfig = {
   mapTableData: (review: ProductReview) => ({
     id: review._id || String(review.id),
     _id: review._id || String(review.id),
-    productName: review.productName,
-    customerName: review.customerName,
+    productName: referenceLabel(review.product) || review.productName || "",
+    customerName: referenceLabel(review.user) || review.customerName || "",
     rating: `${review.rating} ★`,
-    isVerifiedPurchase: review.isVerifiedPurchase ? "Yes" : "No",
+    content: review.content || review.comment || "",
     status: review.status,
   }),
 
@@ -111,43 +124,37 @@ export const reviewConfig = {
     id: review._id || String(review.id),
     title: review.title || `${review.rating} Star Review`,
     status: review.status,
-    shortDescription: `By ${review.customerName} (${review.customerEmail})`,
+    shortDescription: `By ${referenceLabel(review.user) || review.customerName || "Unknown customer"}`,
     attributes: {
-      Product: review.productName,
+      Product: referenceLabel(review.product) || review.productName || "Unknown product",
       Rating: `${review.rating} / 5 Stars`,
-      "Verified Purchase": review.isVerifiedPurchase ? "Yes" : "No",
-      "Customer Email": review.customerEmail,
       "Submitted Date": review.createdAt ? new Date(review.createdAt).toLocaleDateString() : "N/A",
     },
-    description: review.comment || "",
+    description: review.content || review.comment || "",
   }),
 
   // Map Data for FormModal (Add/Edit Mode)
   mapFormData: (review?: ProductReview) => {
     if (!review) {
       return {
-        productName: "",
-        customerName: "",
-        customerEmail: "",
+        product: "",
+        user: "",
         rating: 5,
-        status: "published",
-        isVerifiedPurchase: true,
+        status: "pending",
         title: "",
-        comment: "",
+        content: "",
       };
     }
 
     return {
       _id: review._id,
       id: review.id,
-      productName: review.productName || "",
-      customerName: review.customerName || "",
-      customerEmail: review.customerEmail || "",
+      product: referenceId(review.product),
+      user: referenceId(review.user),
       rating: review.rating || 5,
-      status: review.status || "published",
-      isVerifiedPurchase: Boolean(review.isVerifiedPurchase),
+      status: review.status || "pending",
       title: review.title || "",
-      comment: review.comment || "",
+      content: review.content || review.comment || "",
     };
   },
 
@@ -166,22 +173,8 @@ export const reviewConfig = {
     },
   ],
 
-  // Select Options for FormModal Dynamic Dropdowns
-  categoryOptions: [
-    { label: "5 Stars (Excellent)", value: "5" },
-    { label: "4 Stars (Very Good)", value: "4" },
-    { label: "3 Stars (Average)", value: "3" },
-    { label: "2 Stars (Poor)", value: "2" },
-    { label: "1 Star (Terrible)", value: "1" },
-  ] as SelectOption[],
-
-  brandOptions: [
-    { label: "Verified Buyer", value: "verified" },
-    { label: "Unverified Buyer", value: "unverified" },
-  ] as SelectOption[],
-
   statusOptions: [
-    { label: "Published", value: "published" },
+    { label: "Approved", value: "approved" },
     { label: "Pending Approval", value: "pending" },
     { label: "Rejected", value: "rejected" },
   ] as SelectOption[],
@@ -190,30 +183,21 @@ export const reviewConfig = {
   formFields: [
     // Section 1: Customer & Product
     {
-      name: "productName",
-      label: "Product Name",
-      type: "text",
+      name: "product",
+      label: "Product",
+      type: "select",
       required: true,
       colSpan: 2,
-      placeholder: "e.g. Wireless Noise-Canceling Headphones",
+      placeholder: "Select a product",
       section: "Review Overview",
     },
     {
-      name: "customerName",
-      label: "Customer Name",
-      type: "text",
+      name: "user",
+      label: "Customer",
+      type: "select",
       required: true,
       colSpan: 2,
-      placeholder: "e.g. Emily Watson",
-      section: "Review Overview",
-    },
-    {
-      name: "customerEmail",
-      label: "Customer Email",
-      type: "text",
-      required: true,
-      colSpan: 2,
-      placeholder: "e.g. emily@example.com",
+      placeholder: "Select a customer",
       section: "Review Overview",
     },
     {
@@ -238,31 +222,23 @@ export const reviewConfig = {
       required: true,
       colSpan: 1,
       options: [
-        { label: "Published", value: "published" },
+        { label: "Approved", value: "approved" },
         { label: "Pending Approval", value: "pending" },
         { label: "Rejected", value: "rejected" },
       ],
       section: "Review Overview",
     },
     {
-      name: "isVerifiedPurchase",
-      label: "Verified Buyer Purchase",
-      type: "switch",
-      colSpan: 2,
-      section: "Review Overview",
-    },
-
-    // Section 2: Review Content
-    {
       name: "title",
       label: "Review Headline / Title",
       type: "text",
+      required: true,
       colSpan: 4,
       placeholder: "e.g. Outstanding battery life and great build quality!",
       section: "Review Feedback",
     },
     {
-      name: "comment",
+      name: "content",
       label: "Customer Feedback & Comments",
       type: "textarea",
       required: true,

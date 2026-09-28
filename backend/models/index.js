@@ -8,6 +8,8 @@ const Review = require('./Review');
 const Coupon = require('./Coupon');
 const Media = require('./Media');
 const Setting = require('./Setting');
+const ActivityLog = require('./ActivityLog');
+const Analytics = require('./Analytics');
 
 module.exports = {
   User,
@@ -18,5 +20,7 @@ module.exports = {
   Review,
   Coupon,
   Media,
-  Setting
+  Setting,
+  ActivityLog,
+  Analytics
 };

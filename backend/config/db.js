@@ -1,4 +1,9 @@
 const mongoose = require('mongoose');
+const dns = require('dns');
+
+// Google DNS (8.8.8.8) ya Cloudflare (1.1.1.1) set karne ke liye:
+dns.setDefaultResultOrder('ipv4first'); // IPv4 traffic preference
+dns.setServers(['8.8.8.8', '1.1.1.1']);
 
 const connectDB = async () => {
     try {
@@ -11,4 +16,3 @@ const connectDB = async () => {
 };
 
 module.exports = connectDB;
-

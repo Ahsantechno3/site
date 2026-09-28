@@ -5,6 +5,7 @@ import { categoryConfig } from "./categoryConfig";
 import { couponConfig } from "./couponConfig";
 import { reviewConfig } from "./reviewConfig";
 import { mediaConfig } from "./mediaConfig";
+import {brandConfig} from "./brandConfig"
 
 export function getRouteConfigByPath(pathname: string) {
   const route = pathname.split("/").filter(Boolean)[0] || "";
@@ -29,6 +30,9 @@ export function getRouteConfigByPath(pathname: string) {
     case "coupons":
     case "coupon":
       return couponConfig;
+    case "brands":
+    case "brand":
+      return brandConfig;
 
     case "reviews":
     case "review":

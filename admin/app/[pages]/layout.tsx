@@ -1,7 +1,7 @@
 // /app/[pages]/layout.tsx
 import { notFound } from "next/navigation";
 
-const allowedPages = ["products", "customers", "orders", "categories", "coupons", "reviews", "media"];
+const allowedPages = ["products", "customers", "orders", "categories", "coupons", "reviews", "media","brands"];
 
 export default async function PagesLayout({
   children,

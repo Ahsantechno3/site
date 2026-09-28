@@ -1,121 +1,105 @@
-// models/Setting.js
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const settingSchema = new mongoose.Schema({
-  // General Settings
-  siteName: { 
-    type: String, 
-    required: true,
-    default: 'E-commerce Store'
-  },
-  siteDescription: { 
-    type: String 
-  },
-  siteLogo: { 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'Media' 
-  },
-  favicon: { 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'Media' 
-  },
-  
-  // Contact Information
-  contactEmail: { 
-    type: String 
-  },
-  contactPhone: { 
-    type: String 
-  },
-  contactAddress: { 
-    type: String 
-  },
-  
-  // Social Media Links
-  socialMedia: {
-    facebook: { type: String },
-    twitter: { type: String },
-    instagram: { type: String },
-    linkedin: { type: String },
-    youtube: { type: String }
-  },
-  
-  // SEO Settings
-  seo: {
-    metaTitle: { type: String },
-    metaDescription: { type: String },
-    metaKeywords: [{ type: String }],
-    googleAnalyticsId: { type: String }
-  },
-  
-  // Email Settings
-  emailSettings: {
-    smtpHost: { type: String },
-    smtpPort: { type: Number },
-    smtpUsername: { type: String },
-    smtpPassword: { type: String },
-    smtpEncryption: { type: String, enum: ['tls', 'ssl', 'none'] },
-    fromEmail: { type: String },
-    fromName: { type: String }
-  },
-  
-  // Payment Settings
-  paymentSettings: {
-    currency: { type: String, default: 'USD' },
-    currencySymbol: { type: String, default: '$' },
-    stripePublicKey: { type: String },
-    stripeSecretKey: { type: String },
-    paypalClientId: { type: String },
-    paypalClientSecret: { type: String },
-    paymentMethods: [{ type: String }]
-  },
-  
-  // Shipping Settings
-  shippingSettings: {
-    freeShippingEnabled: { type: Boolean, default: false },
-    freeShippingMinAmount: { type: Number, default: 0 },
-    shippingRates: [{
-      name: { type: String },
-      rate: { type: Number },
-      estimatedDays: { type: Number }
-    }]
-  },
-  
-  // Tax Settings
-  taxSettings: {
-    taxEnabled: { type: Boolean, default: false },
-    taxRate: { type: Number, default: 0 },
-    taxIncludedInPrice: { type: Boolean, default: false }
-  },
-  
-  // Notification Settings
-  notifications: {
-    emailNotifications: { type: Boolean, default: true },
-    smsNotifications: { type: Boolean, default: false },
-    orderConfirmation: { type: Boolean, default: true },
-    shippingUpdates: { type: Boolean, default: true },
-    promotionalEmails: { type: Boolean, default: false }
-  },
-  
-  // Maintenance Mode
-  maintenanceMode: { 
-    type: Boolean, 
-    default: false 
-  },
-  maintenanceMessage: { 
-    type: String 
-  },
-  
-  // Timestamps
-  createdAt: { 
-    type: Date, 
-    default: Date.now 
-  },
-  updatedAt: { 
-    type: Date 
-  }
-}, {
-  timestamps: true
-});
+const settingSchema = new mongoose.Schema(
+  {
+    // 1. General Settings
+    general: {
+      storeName: { type: String, default: "" },
+      storeTagline: { type: String, default: "" },
+      storeEmail: { type: String, default: "" },
+      phone: { type: String, default: "" },
+      timeZone: { type: String, default: "" },
+      language: { type: String, default: "English" },
+      logo: { type: String, default: "" },
+      favicon: { type: String, default: "" },
+    },
 
-module.exports = mongoose.model('Setting', settingSchema);
+    // 2. Store Information
+    storeInfo: {
+      businessName: { type: String, default: "" },
+      businessType: { type: String, default: "" },
+      taxId: { type: String },
+      website: { type: String, default: "" },
+      address: {
+        addressLine1: { type: String, default: "" },
+        addressLine2: { type: String },
+        city: { type: String },
+        state: { type: String },
+        postalCode: { type: String },
+        country: { type: String },
+      },
+    },
+
+    // 3. Payment Methods
+    paymentMethods: [
+      {
+        name: { type: String, required: true }, // e.g. Stripe, PayPal, Cash on Delivery
+        description: { type: String },
+        enabled: { type: Boolean, default: true },
+      },
+    ],
+
+    // 4. Shipping Settings
+    shipping: {
+      zones: [
+        {
+          name: { type: String, required: true }, // e.g. Pakistan, Europe
+          regions: [String],
+          rate: { type: Number, required: true },
+          isActive: { type: Boolean, default: true },
+        },
+      ],
+      freeShippingThreshold: { type: Number, default: 100 },
+      defaultShippingMethod: { type: String, default: "Standard Shipping" },
+    },
+
+    // 5. Notifications
+    notifications: {
+      newOrder: { type: Boolean, default: true },
+      lowStock: { type: Boolean, default: true },
+      customerMessages: { type: Boolean, default: true },
+      marketingUpdates: { type: Boolean, default: false },
+      systemNotifications: { type: Boolean, default: true },
+    },
+
+    // 6. API Settings
+    apiSettings: {
+      publicKey: { type: String },
+      secretKey: { type: String },
+      webhooks: [
+        {
+          event: { type: String, required: true }, // e.g. order.created
+          url: { type: String, required: true },
+          isActive: { type: Boolean, default: true },
+        },
+      ],
+    },
+
+    // 7. Integrations
+    integrations: [
+      {
+        name: { type: String, required: true }, // e.g. Google Analytics, Mailchimp
+        description: { type: String },
+        isConnected: { type: Boolean, default: false },
+        config: { type: mongoose.Schema.Types.Mixed }, // API tokens or tracking IDs
+      },
+    ],
+
+    // 8. Appearance
+    appearance: {
+      theme: {
+        type: String,
+        enum: ["Light", "Dark", "System"],
+        default: "Light",
+      },
+      compactSidebar: { type: Boolean, default: false },
+      showBreadcrumbs: { type: Boolean, default: true },
+      enableAnimations: { type: Boolean, default: true },
+    },
+  },
+  {
+    timestamps: true,
+  },
+);
+
+module.exports = mongoose.model("Setting", settingSchema);

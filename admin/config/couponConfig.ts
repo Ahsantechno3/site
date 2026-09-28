@@ -6,17 +6,37 @@ export interface Coupon {
   id: number;
   code: string;
   type: "percentage" | "fixed_amount" | "free_shipping" | string;
-  value: number;
+  value: number | string;
+  discountType?: "percentage" | "fixed" | string;
+  discountValue?: number | string;
   minPurchaseAmount?: number;
   maxDiscountAmount?: number;
   usageLimit?: number;
   usedCount: number;
   startDate: string;
   endDate: string;
+  validFrom?: string;
+  validUntil?: string;
+  isActive?: boolean;
   status: "active" | "expired" | "disabled" | string;
   description?: string;
   createdAt?: string;
 }
+
+const getDiscountType = (coupon: Coupon) =>
+  coupon.discountType || (coupon.type === "fixed_amount" ? "fixed" : coupon.type);
+
+const getDiscountValue = (coupon: Coupon): number => {
+  const value = coupon.discountValue ?? coupon.value ?? 0;
+  const numericValue = typeof value === "number" ? value : Number(value);
+  return Number.isFinite(numericValue) ? numericValue : 0;
+};
+
+const getCouponStatus = (coupon: Coupon) => {
+  if (coupon.status) return coupon.status;
+  if (coupon.isActive === false) return "disabled";
+  return coupon.validUntil && new Date(coupon.validUntil) < new Date() ? "expired" : "active";
+};
 
 export const couponConfig = {
   routeTitle: "Coupons",
@@ -106,27 +126,29 @@ export const couponConfig = {
     id: coupon._id || String(coupon.id),
     _id: coupon.code,
     code: coupon.code,
-    type: coupon.type === "percentage" ? "Percentage (%)" : "Fixed Amount ($)",
-    value: coupon.type === "percentage" ? `${coupon.value}%` : `$${coupon.value.toFixed(2)}`,
+    type: getDiscountType(coupon) === "percentage" ? "Percentage (%)" : "Fixed Amount ($)",
+    value: getDiscountType(coupon) === "percentage"
+      ? `${getDiscountValue(coupon)}%`
+      : `$${getDiscountValue(coupon).toFixed(2)}`,
     usage: `${coupon.usedCount} / ${coupon.usageLimit || "∞"}`,
-    status: coupon.status,
+    status: getCouponStatus(coupon),
   }),
 
   // Map Data for DetailPanel Component
   mapDetailData: (coupon: Coupon) => ({
     id: coupon._id || String(coupon.id),
     title: `Code: ${coupon.code}`,
-    status: coupon.status,
-    shortDescription: coupon.description || `Discount: ${coupon.value}${coupon.type === "percentage" ? "%" : "$"}`,
+    status: getCouponStatus(coupon),
+    shortDescription: coupon.description || `Discount: ${getDiscountValue(coupon)}${getDiscountType(coupon) === "percentage" ? "%" : "$"}`,
     attributes: {
       "Coupon Code": coupon.code,
-      "Discount Type": coupon.type?.toUpperCase() || "N/A",
-      "Discount Value": coupon.type === "percentage" ? `${coupon.value}%` : `$${coupon.value}`,
+      "Discount Type": getDiscountType(coupon)?.toUpperCase() || "N/A",
+      "Discount Value": getDiscountType(coupon) === "percentage" ? `${getDiscountValue(coupon)}%` : `$${getDiscountValue(coupon)}`,
       "Min Purchase": coupon.minPurchaseAmount ? `$${coupon.minPurchaseAmount}` : "None",
       "Max Discount": coupon.maxDiscountAmount ? `$${coupon.maxDiscountAmount}` : "N/A",
       "Usage Limit": coupon.usageLimit ? `${coupon.usedCount} / ${coupon.usageLimit}` : `${coupon.usedCount} (No Limit)`,
-      "Start Date": coupon.startDate ? new Date(coupon.startDate).toLocaleDateString() : "N/A",
-      "End Date": coupon.endDate ? new Date(coupon.endDate).toLocaleDateString() : "N/A",
+      "Start Date": (coupon.validFrom || coupon.startDate) ? new Date(coupon.validFrom || coupon.startDate).toLocaleDateString() : "N/A",
+      "End Date": (coupon.validUntil || coupon.endDate) ? new Date(coupon.validUntil || coupon.endDate).toLocaleDateString() : "N/A",
     },
     description: coupon.description || "",
   }),
@@ -136,15 +158,15 @@ export const couponConfig = {
     if (!coupon) {
       return {
         code: "",
-        type: "percentage",
-        value: 10,
+        discountType: "percentage",
+        discountValue: 10,
         minPurchaseAmount: 0,
         maxDiscountAmount: 0,
         usageLimit: 100,
         perUserLimit: 1,
-        startDate: new Date().toISOString().split("T")[0],
-        endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
-        status: "active",
+        validFrom: new Date().toISOString().split("T")[0],
+        validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+        isActive: true,
         description: "",
       };
     }
@@ -153,15 +175,15 @@ export const couponConfig = {
       _id: coupon._id,
       id: coupon.id,
       code: coupon.code || "",
-      type: coupon.type || "percentage",
-      value: coupon.value || 0,
+      discountType: coupon.discountType || (coupon.type === "fixed_amount" ? "fixed" : coupon.type) || "percentage",
+      discountValue: coupon.discountValue ?? coupon.value ?? 0,
       minPurchaseAmount: coupon.minPurchaseAmount || 0,
       maxDiscountAmount: coupon.maxDiscountAmount || 0,
       usageLimit: coupon.usageLimit || 0,
       perUserLimit: (coupon as any).perUserLimit || 1,
-      startDate: coupon.startDate || "",
-      endDate: coupon.endDate || "",
-      status: coupon.status || "active",
+      validFrom: coupon.validFrom || coupon.startDate || "",
+      validUntil: coupon.validUntil || coupon.endDate || "",
+      isActive: coupon.isActive ?? coupon.status !== "disabled",
       description: coupon.description || "",
     };
   },
@@ -183,8 +205,7 @@ export const couponConfig = {
   // FormModal Dropdown Options
   categoryOptions: [
     { label: "Percentage (%)", value: "percentage" },
-    { label: "Fixed Amount ($)", value: "fixed_amount" },
-    { label: "Free Shipping", value: "free_shipping" },
+    { label: "Fixed Amount ($)", value: "fixed" },
   ] as SelectOption[],
 
   brandOptions: [
@@ -211,20 +232,19 @@ export const couponConfig = {
       section: "Coupon Details",
     },
     {
-      name: "type",
+      name: "discountType",
       label: "Discount Type",
       type: "select",
       required: true,
       colSpan: 1,
       options: [
         { label: "Percentage (%)", value: "percentage" },
-        { label: "Fixed Amount ($)", value: "fixed_amount" },
-        { label: "Free Shipping", value: "free_shipping" },
+        { label: "Fixed Amount ($)", value: "fixed" },
       ],
       section: "Coupon Details",
     },
     {
-      name: "value",
+      name: "discountValue",
       label: "Discount Value (% or $)",
       type: "number",
       required: true,
@@ -233,16 +253,10 @@ export const couponConfig = {
       section: "Coupon Details",
     },
     {
-      name: "status",
-      label: "Coupon Status",
-      type: "select",
-      required: true,
+      name: "isActive",
+      label: "Coupon Active",
+      type: "switch",
       colSpan: 2,
-      options: [
-        { label: "Active", value: "active" },
-        { label: "Expired", value: "expired" },
-        { label: "Disabled", value: "disabled" },
-      ],
       section: "Coupon Details",
     },
 
@@ -282,7 +296,7 @@ export const couponConfig = {
 
     // Section 3: Dates & Description
     {
-      name: "startDate",
+      name: "validFrom",
       label: "Valid From (Start Date)",
       type: "date",
       required: true,
@@ -290,7 +304,7 @@ export const couponConfig = {
       section: "Validity Schedule",
     },
     {
-      name: "endDate",
+      name: "validUntil",
       label: "Valid Until (End Date)",
       type: "date",
       required: true,

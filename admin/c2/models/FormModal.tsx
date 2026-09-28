@@ -60,6 +60,7 @@ export interface FormModalProps {
   categoryOptions?: SelectOption[];
   brandOptions?: SelectOption[];
   statusOptions?: SelectOption[];
+  error?: string | null;
 }
 
 // Utility to read nested object keys (e.g. "personalInfo.firstName")
@@ -103,6 +104,7 @@ export const FormModal: React.FC<FormModalProps> = ({
   categoryOptions = [],
   brandOptions = [],
   statusOptions = [],
+  error,
 }) => {
   const [tagInputs, setTagInputs] = useState<Record<string, string>>({});
 
@@ -513,6 +515,13 @@ export const FormModal: React.FC<FormModalProps> = ({
             aria-label="Close modal"
           />
         </div>
+
+        {error && (
+          <div className="mx-4 sm:mx-6 mt-4 p-3 text-xs text-red-500 bg-red-500/10 border border-red-500/20 rounded-lg flex items-start gap-2 shrink-0">
+             <span className="font-semibold text-red-500 text-sm">Error:</span>
+             <span>{error}</span>
+          </div>
+        )}
 
         {/* MODAL DYNAMIC FORM BODY */}
         <form

@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { CreateTable } from "@/components/ui/CreateTable";
-import { SearchBar } from "@/components/ui/SearchBar";
+import {CreateTable} from "@/c2/models/CreateTable";
+import { SearchBar } from "@/c2/ui/SearchBar";
 import CustomSelect from "@/c2/ui/Select";
 
 export interface OrderItem {

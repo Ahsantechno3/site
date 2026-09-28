@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Home, X, Menu } from "lucide-react";
-import SidebarItem from "@/components/ui/SidebarItem";
+import SidebarItem from "@/c2/ui/SidebarItem";
 
 export type IconType =
   | "home"
@@ -40,9 +40,9 @@ const TOP_ITEMS: SidebarConfig[] = [
   { name: "Products", icon: "products", iconsize: 20, link: "/products" },
   { name: "Orders", icon: "orders", iconsize: 20, link: "/orders" },
   { name: "Category", icon: "group", iconsize: 20, link: "/categories" },
-  { name: "Media", icon: "media", iconsize: 20, link: "/media" },
-  // { name: "Banners", icon: "reports", iconsize: 20, link: "/banners" },
+  { name: "Brands", icon: "sales", iconsize: 20, link: "/brands" },
   { name: "Coupons", icon: "discounts", iconsize: 20, link: "/coupons" },
+  { name: "Media", icon: "media", iconsize: 20, link: "/media" },
   { name: "Reviews", icon: "reports", iconsize: 20, link: "/reviews" },
 ];
 

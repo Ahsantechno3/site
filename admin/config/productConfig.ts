@@ -11,8 +11,8 @@ export interface Product {
   id: number;
   name: string;
   sku: string;
-  category: string;
-  brand: string;
+  category: string | { _id?: string; name?: string };
+  brand: string | { _id?: string; name?: string };
   status: "published" | "draft" | "archived";
   image?: string;
   gallery?: string[];
@@ -32,6 +32,12 @@ export interface Product {
   tags?: string[];
   specifications?: ProductSpecification[];
 }
+
+const referenceId = (reference: Product["category"]): string =>
+  typeof reference === "string" ? reference : reference?._id || "";
+
+const referenceName = (reference: Product["category"]): string =>
+  typeof reference === "string" ? reference : reference?.name || "";
 
 export const productConfig = {
   routeTitle: "Products",
@@ -253,7 +259,7 @@ export const productConfig = {
     name: product.name,
     image: product.image,
     sku: product.sku,
-    category: product.category,
+    category: referenceName(product.category),
     price: `$${product.price?.toFixed(2) || "0.00"}`,
     stock: product.stock,
     status: product.status,
@@ -268,8 +274,8 @@ export const productConfig = {
     shortDescription: product.shortDescription || `SKU: ${product.sku}`,
     attributes: {
       SKU: product.sku,
-      Category: product.category,
-      Brand: product.brand,
+      Category: referenceName(product.category),
+      Brand: referenceName(product.brand),
       Price: `$${product.price?.toFixed(2) || "0.00"}`,
       SalePrice: `$${product.salePrice?.toFixed(2) || "0.00"}`,
       Discount: product.discount ? `${product.discount}%` : "0%",
@@ -293,8 +299,8 @@ export const productConfig = {
       return {
         name: "",
         sku: "",
-        category: "Electronics",
-        brand: "AudioTech",
+        category: "",
+        brand: "",
         status: "published",
         price: 0,
         salePrice: 0,
@@ -314,8 +320,8 @@ export const productConfig = {
     return {
       name: product.name || "",
       sku: product.sku || "",
-      category: product.category || "Electronics",
-      brand: product.brand || "AudioTech",
+      category: referenceId(product.category),
+      brand: referenceId(product.brand),
       status: product.status || "published",
       price: product.price || 0,
       salePrice: product.salePrice || 0,
@@ -347,18 +353,6 @@ export const productConfig = {
   ],
 
   // FormModal Dropdown Options
-  categoryOptions: [
-    { label: "Electronics", value: "Electronics" },
-    { label: "Furniture", value: "Furniture" },
-    { label: "Clothing", value: "Clothing" },
-  ] as SelectOption[],
-
-  brandOptions: [
-    { label: "AudioTech", value: "AudioTech" },
-    { label: "ComfortMax", value: "ComfortMax" },
-    { label: "Generic", value: "Generic" },
-  ] as SelectOption[],
-
   statusOptions: [
     { label: "Published", value: "published" },
     { label: "Pending Review", value: "pending_review" },
@@ -394,11 +388,6 @@ export const productConfig = {
       type: "select",
       required: true,
       colSpan: 1,
-      options: [
-        { label: "Electronics", value: "Electronics" },
-        { label: "Furniture", value: "Furniture" },
-        { label: "Clothing", value: "Clothing" },
-      ],
       section: "Basic Information",
     },
     {
@@ -407,11 +396,6 @@ export const productConfig = {
       type: "select",
       required: true,
       colSpan: 1,
-      options: [
-        { label: "AudioTech", value: "AudioTech" },
-        { label: "ComfortMax", value: "ComfortMax" },
-        { label: "Generic", value: "Generic" },
-      ],
       section: "Basic Information",
     },
     {

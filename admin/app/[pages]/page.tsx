@@ -46,6 +46,10 @@ function withDynamicOptions(fields: FormField[], options: EntityOptions): FormFi
         return options.brandOptions?.length ? { ...field, options: options.brandOptions } : field;
       case "vendor":
         return options.vendorOptions?.length ? { ...field, options: options.vendorOptions } : field;
+      case "product":
+        return options.productOptions?.length ? { ...field, options: options.productOptions } : field;
+      case "user":
+        return options.userOptions?.length ? { ...field, options: options.userOptions } : field;
       default:
         return field;
     }
@@ -586,6 +590,7 @@ const PageLayout: React.FC = () => {
           categoryOptions={options.categoryOptions || configOptions.categoryOptions || []}
           brandOptions={options.brandOptions || configOptions.brandOptions || []}
           statusOptions={options.statusOptions || configOptions.statusOptions || []}
+          error={loadError}
         />
       )}
 
