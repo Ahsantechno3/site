@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Home, X, Menu } from "lucide-react";
-import SidebarItem from "@/c2/ui/SidebarItem";
+import SidebarItem from "@/components/ui/SidebarItem";
 
 export type IconType =
   | "home"

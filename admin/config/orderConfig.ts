@@ -1,4 +1,4 @@
-import { SelectOption, FormField } from "@/c2/models/FormModal";
+import { SelectOption, FormField } from "@/components/models/FormModal";
 import { Download, Plus, RefreshCcwDot } from "lucide-react";
 
 export interface OrderCustomer {

@@ -1,16 +1,15 @@
 "use client";
 
-import TopBar from "@/c2/ui/TopBar";
-import StatsGrid from "@/c2/models/StatsGrid";
+import TopBar from "@/components/ui/TopBar";
+import StatsGrid from "@/components/models/StatsGrid";
 import { RefreshCcwDot, Download, Plus } from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
-import TabsBar, { HeaderActionButton } from "@/c2/models/TabsBar";
-import FilterBar from "@/c2/models/FilterBar";
-import { CreateTable } from "@/c2/models/CreateTable";
-import Pagination from "@/c2/models/Pagination";
-import { DetailPanel } from "@/c2/models/DetailPanel";
-import FormModal, { ItemFormData, SelectOption } from "@/c2/models/FormModal";
-import { usePathname } from "next/navigation";
+import TabsBar, { HeaderActionButton } from "@/components/models/TabsBar";
+import FilterBar from "@/components/models/FilterBar";
+import { CreateTable } from "@/components/models/CreateTable";
+import Pagination from "@/components/models/Pagination";
+import { DetailPanel } from "@/components/models/DetailPanel";
+import FormModal, { ItemFormData, SelectOption } from "@/components/models/FormModal";
 
 interface ProductSpecification {
   key: string;
@@ -189,12 +188,6 @@ const CustomSelect: React.FC<{
     ))}
   </select>
 );
-// url param se page identification
-const pathname = usePathname();
-const [Route, setRoute] = useState<string>(
-  pathname.split("/").filter(Boolean)[0] || "",
-);
-
 const DashboardLayout: React.FC = () => {
   const [activeTab, setActiveTab] = useState("All Products");
   const [items, setItems] = useState<Product[]>(rawProducts);

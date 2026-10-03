@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import CustomSelect from "@/c2/ui/Select";
+import CustomSelect from "@/components/ui/Select";
 
 interface StepData {
   label: string;

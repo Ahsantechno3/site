@@ -9,7 +9,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import CustomSelect from "@/c2/ui/Select";
+import CustomSelect from "@/components/ui/Select";
 
 interface DataPoint {
   date: string;

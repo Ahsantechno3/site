@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import {CreateTable} from "@/c2/models/CreateTable";
-import { SearchBar } from "@/c2/ui/SearchBar";
-import CustomSelect from "@/c2/ui/Select";
+import {CreateTable} from "@/components/models/CreateTable";
+import { SearchBar } from "@/components/ui/SearchBar";
+import CustomSelect from "@/components/ui/Select";
 
 export interface OrderItem {
   id: string;
@@ -25,7 +25,6 @@ export const RecentOrdersCard: React.FC<RecentOrdersProps> = ({ orders }) => {
   const isLoading = !orders;
 
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
-  const [selectedOrder, setSelectedOrder] = useState<OrderItem | null>(null);
 
   // Safe fallback agar orders undefined hon
   const activeOrders = orders || [];
@@ -81,10 +80,10 @@ export const RecentOrdersCard: React.FC<RecentOrdersProps> = ({ orders }) => {
         <div className="flex items-center gap-2.5 w-full sm:w-auto">
           {/* SearchBar ko categoryFilteredOrders pass karein taake search usi category ke andar ho */}
           <SearchBar<OrderItem>
-            data={categoryFilteredOrders}
-            searchFields={["customer", "productName", "orderId"]}
-            onSearchResults={setSearchResults}
-            placeholder="Search customer or product..."
+            searchSourceData={categoryFilteredOrders}
+            searchableFieldsKeys={["customer", "productName", "orderId"]}
+            onSearchResultsUpdate={setSearchResults}
+            searchPlaceholder="Search customer or product..."
           />
 
           <CustomSelect
@@ -105,7 +104,7 @@ export const RecentOrdersCard: React.FC<RecentOrdersProps> = ({ orders }) => {
 
       <CreateTable<OrderItem>
         data={searchResults}
-        onSelectItem={(order) => setSelectedOrder(order)}
+        onSelectItem={() => undefined}
       />
     </div>
   );

@@ -10,7 +10,7 @@ import {
   Image as ImageIcon,
   Trash2,
 } from "lucide-react";
-import Button from "@/c2/ui/Button"; 
+import Button from "@/components/ui/Button"; 
 export interface MediaItem {
   id?: number | string;
   _id?: string;

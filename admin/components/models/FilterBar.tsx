@@ -2,14 +2,14 @@
 
 import React, { useEffect, useState } from "react";
 import { RotateCcw } from "lucide-react";
-import SearchBar, { SearchableEntityRecord } from "@/c2/ui/SearchBar";
+import SearchBar, { SearchableEntityRecord } from "@/components/ui/SearchBar";
 import Select, {
   SelectOption,
   SelectVariant,
   SelectSize,
   DropdownDirection,
-} from "@/c2/ui/Select";
-import Button from "@/c2/ui/Button";
+} from "@/components/ui/Select";
+import Button from "@/components/ui/Button";
 
 export interface FilterConfigItem {
   id: string;

@@ -1,5 +1,5 @@
 import React from "react";
-import { OrderItem } from "@/c2/layout/RecentOrdersCard";
+import { OrderItem } from "@/components/layout/RecentOrdersCard";
 
 const statusStyles: Record<string, { bg: string; text: string; dot: string }> = {
   Shipped: {

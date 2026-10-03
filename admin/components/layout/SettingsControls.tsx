@@ -2,8 +2,8 @@
 
 import type { InputHTMLAttributes, ReactNode } from "react";
 import { LoaderCircle, Save } from "lucide-react";
-import Button from "@/c2/ui/Button";
-import Select from "@/c2/ui/Select";
+import Button from "@/components/ui/Button";
+import Select from "@/components/ui/Select";
 
 export function SettingsCard({
   title,

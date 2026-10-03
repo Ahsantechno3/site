@@ -5,15 +5,15 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
 import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
 
-import TopBar from "@/c2/ui/TopBar";
-import StatsGrid from "@/c2/models/StatsGrid";
-import TabsBar, { HeaderActionButton } from "@/c2/models/TabsBar";
-import FilterBar from "@/c2/models/FilterBar";
-import { CreateTable } from "@/c2/models/CreateTable";
-import Pagination from "@/c2/models/Pagination";
-import { DetailPanel } from "@/c2/models/DetailPanel";
-import FormModal, { FormField, ItemFormData } from "@/c2/models/FormModal";
-import MediaHandlerModal from "@/c2/models/MediaHandler";
+import TopBar from "@/components/ui/TopBar";
+import StatsGrid from "@/components/models/StatsGrid";
+import TabsBar, { HeaderActionButton } from "@/components/models/TabsBar";
+import FilterBar from "@/components/models/FilterBar";
+import { CreateTable } from "@/components/models/CreateTable";
+import Pagination from "@/components/models/Pagination";
+import { DetailPanel } from "@/components/models/DetailPanel";
+import FormModal, { FormField, ItemFormData } from "@/components/models/FormModal";
+import MediaHandlerModal from "@/components/models/MediaHandler";
 
 import { getRouteConfigByPath } from "@/config";
 import { extractApiError, PaginationMeta } from "@/services/api";

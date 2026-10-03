@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import CustomSelectUp from "@/c2/ui/Select"; // Path check kar lein
+import CustomSelectUp from "@/components/ui/Select"; // Path check kar lein
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface PaginationProps {

@@ -1,5 +1,5 @@
 import React from "react";
-import StatCard, { StatCardProps } from "@/c2/ui/StatsCard";
+import StatCard, { StatCardProps } from "@/components/ui/StatsCard";
 import { DollarSign, ShoppingBag, Users } from "lucide-react";
 
 interface StatsOverviewProps {

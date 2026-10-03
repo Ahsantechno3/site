@@ -8,8 +8,8 @@ import {
   UploadCloud,
   Trash2,
 } from "lucide-react";
-import Select, { SelectOption } from "@/c2/ui/Select";
-import Button from "@/c2/ui/Button";
+import Select, { SelectOption } from "@/components/ui/Select";
+import Button from "@/components/ui/Button";
 
 // Export SelectOption for module integration
 export type { SelectOption };

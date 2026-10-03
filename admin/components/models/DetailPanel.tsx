@@ -1,7 +1,7 @@
 // components/ui/DetailPanel.tsx
 import React, { useState } from "react";
 import { X, Package, Star, Pencil, Trash2 } from "lucide-react";
-import Button from "@/c2/ui/Button";
+import Button from "@/components/ui/Button";
 
 export interface DetailSpecification {
   key: string;

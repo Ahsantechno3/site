@@ -62,30 +62,65 @@ const settingSchema = new mongoose.Schema(
       systemNotifications: { type: Boolean, default: true },
     },
 
-    // 6. API Settings
-    apiSettings: {
-      publicKey: { type: String },
-      secretKey: { type: String },
-      webhooks: [
-        {
-          event: { type: String, required: true }, // e.g. order.created
-          url: { type: String, required: true },
-          isActive: { type: Boolean, default: true },
-        },
-      ],
-    },
-
-    // 7. Integrations
+    // 6. UPDATED: Universal / Dynamic Integrations (Zero-Selection Architecture)
     integrations: [
       {
-        name: { type: String, required: true }, // e.g. Google Analytics, Mailchimp
-        description: { type: String },
-        isConnected: { type: Boolean, default: false },
-        config: { type: mongoose.Schema.Types.Mixed }, // API tokens or tracking IDs
+        usageType: {
+          type: String,
+          enum: [
+            "STORAGE",
+            "PAYMENT",
+            "SMS_NOTIFICATION",
+            "EMAIL",
+            "AUTH",
+            "API",
+          ],
+          required: true,
+        },
+        serviceSlug: { type: String, required: true, trim: true }, // Unique identifier (e.g. "my-sms-api")
+        title: { type: String, required: true }, // Name given by Admin
+        baseUrl: { type: String, required: true, trim: true }, // API Base URL
+        authType: {
+          type: String,
+          enum: ["API_KEY", "BEARER_TOKEN", "BASIC", "CUSTOM_HEADER", "NONE"],
+          default: "NONE",
+        },
+        authCredentials: {
+          apiKey: { type: String, default: "" },
+          headerKey: { type: String, default: "Authorization" }, // Custom Header Name
+          username: { type: String, default: "" },
+          password: { type: String, default: "" },
+        },
+        globalHeaders: { type: Map, of: String, default: {} },
+        endpoints: [
+          {
+            name: { type: String, required: true }, // Action Name e.g. "send_otp"
+            path: { type: String, required: true }, // Endpoint Path e.g. "/v1/send"
+            method: {
+              type: String,
+              enum: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+              default: "POST",
+            },
+            defaultHeaders: { type: Map, of: String, default: {} },
+            responseMapping: {
+              successField: { type: String, default: "" },
+              dataField: { type: String, default: "" }, // e.g. "data.url"
+              errorField: { type: String, default: "" },
+            },
+          },
+        ],
+        webhooks: [
+          {
+            event: { type: String, required: true }, // e.g. order.created
+            url: { type: String, required: true },
+            isActive: { type: Boolean, default: true },
+          },
+        ],
+        isConnected: { type: Boolean, default: true },
       },
     ],
 
-    // 8. Appearance
+    // 7. Appearance
     appearance: {
       theme: {
         type: String,

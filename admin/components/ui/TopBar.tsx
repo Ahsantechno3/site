@@ -2,8 +2,8 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { MessageSquare, Bell, CheckCheck, UserRound } from "lucide-react";
-import SearchBar from "@/c2/ui/SearchBar";
-import ThemeToggle from "@/c2/models/ThemeToggle";
+import SearchBar, { SearchableEntityRecord } from "@/components/ui/SearchBar";
+import ThemeToggle from "@/components/models/ThemeToggle";
 
 // Dynamic Interfaces
 export interface UserProfile {
@@ -27,7 +27,7 @@ export interface MessageItem {
   isUnread: boolean;
 }
 
-interface TopBarProps<T = any> {
+interface TopBarProps<T extends SearchableEntityRecord> {
   title: string;
   subtitle?: string;
   user: UserProfile;
@@ -40,7 +40,7 @@ interface TopBarProps<T = any> {
   onSearchResults?: (results: T[]) => void;
 }
 
-export const TopBar = <T extends Record<string, any>>({
+export const TopBar = <T extends SearchableEntityRecord>({
   title,
   subtitle,
   user,
@@ -90,10 +90,10 @@ export const TopBar = <T extends Record<string, any>>({
         {/* Modular Search Bar Component */}
         {searchData.length > 0 && onSearchResults && (
           <SearchBar
-            data={searchData}
-            searchFields={searchFields}
-            onSearchResults={onSearchResults}
-            placeholder={searchPlaceholder}
+            searchSourceData={searchData}
+            searchableFieldsKeys={searchFields}
+            onSearchResultsUpdate={onSearchResults}
+            searchPlaceholder={searchPlaceholder}
           />
         )}
 

@@ -1,4 +1,4 @@
-import { SelectOption } from "@/c2/ui/Select";
+import { SelectOption } from "@/components/ui/Select";
 import { Download, Plus, RefreshCcwDot } from "lucide-react";
 
 export interface MediaItem {

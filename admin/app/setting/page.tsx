@@ -7,7 +7,6 @@ import {
   Code2,
   CreditCard,
   Link2,
-  LoaderCircle,
   Palette,
   Settings,
   ShieldCheck,
@@ -15,10 +14,10 @@ import {
   Truck,
   Users,
 } from "lucide-react";
-import Button from "@/c2/ui/Button";
+import Button from "@/components/ui/Button";
 import { settingsService } from "@/services/settingsService";
 import type { SettingsDocument, SettingsSection, SettingsUser } from "@/services/settingsService";
-import { SettingsPanel } from "../../c2/layout/SettingsPanels";
+import { SettingsPanel } from "../../components/layout/SettingsPanels";
 
 type SettingMenu =
   | "General"
@@ -28,8 +27,7 @@ type SettingMenu =
   | "Notifications"
   | "Users & Roles"
   | "Security"
-  | "API Settings"
-  | "Integrations"
+  | "API / Integrations"
   | "Appearance";
 
 const settingMenus: { name: SettingMenu; icon: LucideIcon }[] = [
@@ -40,8 +38,8 @@ const settingMenus: { name: SettingMenu; icon: LucideIcon }[] = [
   { name: "Notifications", icon: Bell },
   { name: "Users & Roles", icon: Users },
   { name: "Security", icon: ShieldCheck },
-  { name: "API Settings", icon: Code2 },
-  { name: "Integrations", icon: Link2 },
+  // { name: "API Settings", icon: Code2 },
+  { name: "API / Integrations", icon: Code2 },
   { name: "Appearance", icon: Palette },
 ];
 
@@ -115,11 +113,63 @@ export default function SettingsPage() {
     }
   };
 
+  /* Full Page Theme-Matched Skeleton Component */
   if (loading) {
     return (
-      <div className="flex h-96 items-center justify-center" role="status" aria-label="Loading settings">
-        <LoaderCircle className="h-7 w-7 animate-spin text-[var(--primary)]" />
-      </div>
+      <main className="min-h-full bg-[var(--background)] p-3 animate-pulse flex flex-col gap-3">
+        {/* Page Header Skeleton */}
+        <header className="space-y-2">
+          <div className="h-7 w-36 rounded-md bg-[var(--primary-soft)] border border-[var(--border)]" />
+          <div className="h-4 w-72 rounded-md bg-[var(--primary-soft)] opacity-70" />
+        </header>
+
+        <div className="grid grid-row-2 gap-3 flex-1">
+          {/* Navigation Tab Grid Skeleton */}
+          <nav className="h-fit rounded-xl border border-[var(--border)] bg-[var(--background)] p-2 flex flex-wrap gap-3">
+            {Array.from({ length: 10 }).map((_, index) => (
+              <div
+                key={index}
+                className="h-10 min-w-[clamp(130px,18%,100%)] flex-1 rounded-lg bg-[var(--primary-soft)] border border-[var(--border)]/60"
+              />
+            ))}
+          </nav>
+
+          {/* Full Page Content Panel Skeleton */}
+          <section className="min-w-0 rounded-xl border border-[var(--border)] bg-[var(--surface)]/50 p-6 flex flex-col justify-between space-y-8 flex-1">
+            <div className="space-y-6">
+              {/* Section Header */}
+              <div className="space-y-2 border-b border-[var(--border)] pb-5">
+                <div className="h-6 w-48 rounded-md bg-[var(--primary-soft)]" />
+                <div className="h-4 w-64 rounded-md bg-[var(--primary-soft)] opacity-70" />
+              </div>
+
+              {/* Form Input Fields Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {Array.from({ length: 2 }).map((_, index) => (
+                  <div key={index} className="space-y-2">
+                    <div className="h-4 w-28 rounded bg-[var(--primary-soft)]" />
+                    <div className="h-10 w-full rounded-xl bg-[var(--background)] border border-[var(--border)]" />
+                  </div>
+                ))}
+              </div>
+
+              {/* Store Logo & Image Block Skeleton */}
+              <div className="space-y-3 pt-2">
+                <div className="space-y-2">
+                  <div className="h-4 w-32 rounded bg-[var(--primary-soft)]" />
+                  <div className="h-10 w-full rounded-xl bg-[var(--background)] border border-[var(--border)]" />
+                </div>
+                <div className="h-20 w-20 rounded-xl bg-[var(--surface)] border border-[var(--border)]" />
+              </div>
+            </div>
+
+            {/* Action Save Button Skeleton */}
+            <div className="pt-4 border-t border-[var(--border)] flex justify-end">
+              <div className="h-10 w-36 rounded-xl bg-[var(--primary)] opacity-40" />
+            </div>
+          </section>
+        </div>
+      </main>
     );
   }
 
@@ -137,7 +187,7 @@ export default function SettingsPage() {
       )}
 
       <div className="grid grid-row-2 gap-3 ">
-        <nav aria-label="Settings sections" className="h-fit  rounded-xl border border-[var(--border)] bg-[var(--background)] p-2 flex flex-wrap gap-3">
+        <nav aria-label="Settings sections" className="h-fit rounded-xl border border-[var(--border)] bg-[var(--background)] p-2 flex flex-wrap gap-3">
           {settingMenus.map(({ name, icon: Icon }) => {
             const active = activeMenu === name;
             return (
@@ -150,7 +200,7 @@ export default function SettingsPage() {
                   setError("");
                   setNotice("");
                 }}
-                className={`min-w-[clamp(130px,18%,100%)] flex-1  justify-start text-left ${active ? "text-[var(--primary)]!" : ""}`}
+                className={`min-w-[clamp(130px,18%,100%)] flex-1 justify-start text-left ${active ? "text-[var(--primary)]!" : ""}`}
               >
                 <Icon size={17} className={active ? "text-[var(--primary)]" : "text-[var(--text-muted)]"} />
                 <span className="truncate">{name}</span>

@@ -1,15 +1,15 @@
 // /app/page.tsx
 "use client";
 import React, { useState, useEffect } from "react";
-import StatsOverview from "@/c2/layout/StatsOverview";
-import TopCategories from "@/c2/layout/TopCategories";
-import RevenueAnalytics from "@/c2/layout/RevenueAnalytics";
-import MonthlyTargetCard from "@/c2/layout/MonthlyTargetCard";
-import ActiveUserCard from "@/c2/layout/ActiveUserCard";
-import ConversionRateCard from "@/c2/layout/ConversionRateCard";
-import TrafficSourcesCard from "@/c2/layout/TrafficSourcesCard";
-import RecentOrdersCard from "@/c2/layout/RecentOrdersCard";
-import TopBar from "@/c2/ui/TopBar";
+import StatsOverview from "@/components/layout/StatsOverview";
+import TopCategories from "@/components/layout/TopCategories";
+import RevenueAnalytics from "@/components/layout/RevenueAnalytics";
+import MonthlyTargetCard from "@/components/layout/MonthlyTargetCard";
+import ActiveUserCard from "@/components/layout/ActiveUserCard";
+import ConversionRateCard from "@/components/layout/ConversionRateCard";
+import TrafficSourcesCard from "@/components/layout/TrafficSourcesCard";
+import RecentOrdersCard from "@/components/layout/RecentOrdersCard";
+import TopBar from "@/components/ui/TopBar";
 import { getDashboardAllData } from "@/services/dashboardService";
 
 export default function Page() {

@@ -2,8 +2,8 @@
 "use client";
 
 import React from "react";
-import Sidebar from "@/c2/layout/Sidebar";
-import AdminLoginPopup from "@/c2/Login";
+import Sidebar from "@/components/layout/Sidebar";
+import AdminLoginPopup from "@/components/Login";
 import { AuthProvider, useAdminAuth } from "@/services/authContext";
 import "./globals.css";
 

@@ -14,7 +14,7 @@ import {
   Ticket,
   Users,
 } from "lucide-react";
-import StatCard, { CardTheme, StatCardProps } from "@/c2/ui/StatsCard";
+import StatCard, { CardTheme, StatCardProps } from "@/components/ui/StatsCard";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type StatRow = Record<string, any>;
